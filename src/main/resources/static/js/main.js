@@ -9,11 +9,13 @@ var connectingElement = document.querySelector('#connecting');
 var stompClient = null;
 var username = null;
 var senderId = null;
+var chatId = null;
 
 
 function connect() {
-    username = document.querySelector('#username').innerText.trim();
-    senderId = document.querySelector('#userId').innerText.trim();
+    username = document.querySelector('#username').value.trim();
+    senderId = document.querySelector('#userId').value.trim();
+    chatId = document.querySelector('#chatId').value.trim();
 
     var socket = new SockJS('/ws');
     stompClient = Stomp.over(socket);
@@ -46,7 +48,6 @@ function onError(error) {
 
 function sendMessage(event) {
     var messageContent = messageInput.value.trim();
-    var chatId = document.querySelector('#chatId').innerText.trim();
     if(messageContent && stompClient) {
         var chatMessage = {
             senderId: senderId,

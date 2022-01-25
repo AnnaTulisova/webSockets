@@ -27,6 +27,12 @@ spring:
           batch_size: 30
 
   datasource:
+    hikari:
+      max-lifetime: 2000000
+      initialization-fail-timeout: -1
+      connection-timeout: 3600000
+      minimum-idle: 7
+      maximum-pool-size: 14
     url: jdbc:postgresql://${DATABASE_URL}:${DATABASE_PORT}/${DATABASE_NAME}
     username: ${DATABASE_USERNAME}
     password: ${DATABASE_PASSWORD}

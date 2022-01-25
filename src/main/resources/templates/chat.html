@@ -14,19 +14,24 @@
 <div id="chat-container">
     <div class="chat-header">
         <div class="user-container">
-            <span id="username" th:utext="${username}"></span>
+            <span id="login" th:utext="${username}"></span>
             <a th:href="@{/logout}">Logout</a>
         </div>
         <h3>Spring WebSocket Chat Demo</h3>
     </div>
 
-    <input type="hidden" id="senderId" th:utext="${userId}"/>
-    <input type="hidden" id="chatId" th:utext="${chatId}"/>
+    <input type="hidden" id="userId" th:value="${userId}"/>
+    <input type="hidden" id="username" th:value="${username}"/>
+    <input type="hidden" id="chatId" th:value="${chatId}"/>
 
     <hr/>
 
     <div id="connecting">Connecting...</div>
     <ul id="messageArea">
+        <li class="chat-message" th:each="message : ${messages}">
+            <strong class="nickname" th:utext="${message.senderName}"></strong>
+            <span th:text="${message.content}"></span>
+        </li>
     </ul>
     <form id="messageForm" name="messageForm">
         <div class="input-message">

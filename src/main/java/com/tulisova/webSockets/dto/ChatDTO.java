@@ -9,5 +9,5 @@ import javax.persistence.Entity;
 @Accessors(chain = true)
 public class ChatDTO {
     private Long id;
-    private Long name;
+    private String name;
 }

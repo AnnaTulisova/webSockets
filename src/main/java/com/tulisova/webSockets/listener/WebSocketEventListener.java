@@ -1,7 +1,7 @@
 package com.tulisova.webSockets.listener;
 
-import com.tulisova.webSockets.dao.model.ChatMessage;
 import com.tulisova.webSockets.dao.model.MessageType;
+import com.tulisova.webSockets.dto.ChatMessageDTO;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,11 +36,11 @@ public class WebSocketEventListener {
         if(username != null) {
             logger.info("User Disconnected : " + username);
 
-            ChatMessage chatMessage = new ChatMessage();
-            chatMessage.setType(MessageType.LEAVE);
-            chatMessage.setSenderName(username);
+            ChatMessageDTO chatMessageDTO = new ChatMessageDTO()
+                    .setType(MessageType.LEAVE)
+                    .setSenderName(username);
 
-            messagingTemplate.convertAndSend("/user/publicChatRoom", chatMessage);
+            messagingTemplate.convertAndSend("/user/publicChatRoom", chatMessageDTO);
         }
     }
 }

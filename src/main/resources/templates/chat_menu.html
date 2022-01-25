@@ -11,7 +11,22 @@
 
 </head>
 <body>
+<div id="chat-container">
+    <div class="chat-header">
+        <div class="user-container">
+            <span id="username" th:utext="${username}"></span>
+            <a th:href="@{/logout}">Logout</a>
+        </div>
+        <h3>Spring WebSocket Chat Demo</h3>
+    </div>
 
+    <ul>
+        <li th:each="chat : ${chats}" th:attr="data-value=${chat.id}">
+            <span th:text="${chat.name}" th:remove="tag"></span>
+            <a th:href="@{/chat/{id}(id=${chat.id})}" class='go' aria-hidden='true'>&times;</a>
+        </li>
+    </ul>
+</div>
 
 </body>
 </html>

@@ -1,6 +1,5 @@
 package com.tulisova.webSockets.controller;
 
-import com.tulisova.webSockets.dao.model.ChatMessage;
 import com.tulisova.webSockets.dao.model.User;
 import com.tulisova.webSockets.dto.ChatDTO;
 import com.tulisova.webSockets.dto.ChatMessageDTO;
@@ -8,17 +7,15 @@ import com.tulisova.webSockets.service.ChatMessageService;
 import com.tulisova.webSockets.service.ChatService;
 import com.tulisova.webSockets.service.UserService;
 import lombok.AllArgsConstructor;
-import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @AllArgsConstructor
@@ -57,24 +54,32 @@ public class ChatController {
 
     @RequestMapping("/")
     public String index(HttpServletRequest request, Model model) {
-        String userId = (String) request.getSession().getAttribute("userId");
+        Long userId = (Long) request.getSession().getAttribute("userId");
 
-        if (userId == null || userId.isEmpty()) {
+        if (userId == null) {
             return "redirect:/login";
         }
 
+        String username = (String) request.getSession().getAttribute("username");
+
         model.addAttribute("userId", userId);
-        List<ChatDTO> userChats = chatService.getChatsByUserId(Long.getLong(userId));
+        model.addAttribute("username", username);
+        List<ChatDTO> userChats = chatService.getChatsByUserId(userId);
         model.addAttribute("chats", userChats);
 
         return "chat_menu";
     }
 
     @RequestMapping(path = "/chat/{id}", method = RequestMethod.GET)
-    public String getMessages(Long chatId, HttpServletRequest request, Model model) {
+    public String getMessages(@PathVariable("id") Long id, HttpServletRequest request, Model model) {
         long userId = (long) request.getSession().getAttribute("userId");
-        List<ChatMessageDTO> chatMessages = chatMessageService.findChatMessages(chatId, userId);
+        String username = (String) request.getSession().getAttribute("username");
+        List<ChatMessageDTO> chatMessages = chatMessageService.findChatMessages(id, userId);
+
         model.addAttribute("messages", chatMessages);
+        model.addAttribute("userId", userId);
+        model.addAttribute("username", username);
+        model.addAttribute("chatId", id);
 
         return "chat";
     }
@@ -90,14 +95,14 @@ public class ChatController {
                           @RequestParam(defaultValue = "") String password) {
         login = login.trim();
 
-        if (login.isEmpty()) {
+        if (login.isEmpty() || password.isEmpty()) {
             return "login";
         }
 
         Optional<User> possibleUser = userService.findByLoginAndPassword(login, password);
 
         if(possibleUser.isPresent()) {
-            request.getSession().setAttribute("username", login);
+            request.getSession().setAttribute("username", possibleUser.get().getFullName());
             request.getSession().setAttribute("userId", possibleUser.get().getId());
         }
 
